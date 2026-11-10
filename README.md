@@ -1,6 +1,6 @@
 # Simra Silicon
 
-Chip designs produced by an autonomous agent team, on the IHP SG13G2 open PDK
+Chip designs produced by simra-tech team, on the IHP SG13G2 open PDK
 (SiGe BiCMOS, HBT fT ≈ 350 GHz).
 
 This repository holds **only what is needed to reproduce and verify the designs**:
